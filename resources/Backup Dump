@@ -1,0 +1,107 @@
+public void getPrettyParent(DefaultMutableTreeNode node) {
+		int i = node.getChildCount();
+		// if(node.getUserObject().getClass().getName().equals("parserTest1.TreeMaker2$tmVariable"))
+		// {
+		// VariableDeclarator s;// = (VariableDeclarator) n;
+		// //System.out.println(s.toString());
+		// //name = s.getId().getName() + " : ";
+		// return;
+		// }
+		Node n = (Node) node.getUserObject();
+		String type = getType(n);
+		// System.out.print("--");
+		String name = "";
+		if (type.equals("CompilationUnit")) {
+			name = PATH;
+		}
+		if (type.equals("ImportDeclaration")) {
+			name = n.toString();
+		}
+		if (type.equals("ClassOrInterfaceDeclaration")) {
+			ClassOrInterfaceDeclaration s = (ClassOrInterfaceDeclaration) n;
+			name = s.getName();
+		}
+		if (type.equals("EnumDeclaration")) {
+			EnumDeclaration s = (EnumDeclaration) n;
+			name = s.getName();
+		}
+
+		if (type.equals("MethodDeclaration")) {
+			MethodDeclaration s = (MethodDeclaration) n;
+			name = s.getName() + "(";
+			LinkedList<Parameter> paramList = (LinkedList<Parameter>) s
+					.getParameters();
+			if (paramList != null) {
+				for (Parameter parameter : paramList) {
+					name += parameter.getType().toString() + ", ";
+				}
+				name = name.substring(0, name.length() - 2);
+			}
+
+			name += ") : " + s.getType();
+		}
+
+		if (type.equals("ConstructorDeclaration")) {
+			ConstructorDeclaration s = (ConstructorDeclaration) n;
+			name = s.getName() + "(";
+			LinkedList<Parameter> paramList = (LinkedList<Parameter>) s
+					.getParameters();
+			if (paramList != null) {
+				for (Parameter parameter : paramList) {
+					name += parameter.getType().toString() + ", ";
+				}
+				name = name.substring(0, name.length() - 2);
+			}
+
+			name += ")";
+		}
+
+		if (type.equals("VariableDeclarator")) {
+			VariableDeclarator s = (VariableDeclarator) n;
+			name = s.getId().getName() + " : " + s.getData();
+		}
+
+		if (i == 0) {
+			TmNode tn = new TmNode(n, name);
+			node.setUserObject(tn);
+		} else {
+
+			// System.out.println("--> " + name + " #" + getType(n));
+			for (int j = 0; j < node.getChildCount(); j++) {
+				// System.out.print("--");
+				getPrettyParent((DefaultMutableTreeNode) node.getChildAt(j));
+			}
+			if (type.equals("ImportDeclaration")) {
+				name = "Import Declarations";
+			}
+			TmNode tn = new TmNode(n, name);
+			node.setUserObject(tn);
+		}
+	}
+	
+	
+	
+//	for (; codeIndex < editor.getSketch().getCodeCount(); codeIndex++) {
+//		
+//			if(editor.getSketch().getCurrentCode().equals(editor.getSketch().getCode(codeIndex)))
+//				try {
+//					lines = PApplet.split(editor.getSketch().getCode(codeIndex).getDocument().getText(0,editor.getSketch().getCode(codeIndex).getDocument().getLength()), '\n');
+//				} catch (BadLocationException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			else
+//				
+//			lines = PApplet.split(editor.getSketch().getCode(codeIndex)
+//					.getProgram(), '\n');
+//			
+//			if (x >= lines.length) {
+//				x -= lines.length;
+//			} else {
+//				// System.out.println("x: " + temp + " relative x = " + x +
+//				// "in tab: " +
+//				// editor.getSketch().getCode(codeIndex).getPrettyName());
+//				editor.getSketch().setCurrentCode(codeIndex);
+//				break;
+//			}
+//		}
