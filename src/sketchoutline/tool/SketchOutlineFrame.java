@@ -67,6 +67,7 @@ public class SketchOutlineFrame extends JFrame {
 			public void run() {
 				try {
 					// TreeMaker tm = new TreeMaker(TreeMaker.PATH);
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					SketchOutlineFrame frame = new SketchOutlineFrame(null);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,6 +79,7 @@ public class SketchOutlineFrame extends JFrame {
 	}
 
 	JFrame thisFrame = this;
+	OutlineTree newTree;
 
 	/**
 	 * Constructor for SketchOutlineFrame
@@ -119,6 +121,7 @@ public class SketchOutlineFrame extends JFrame {
 		if (thTreeMaker.treeMaker.treeCreated) {
 
 			tree = new JTree(thTreeMaker.getTree());
+			newTree = new OutlineTree(thTreeMaker.getTree());
 			// treeMaker.offSet - 1;
 			tree.setExpandsSelectedPaths(true);
 			if (editor != null)
@@ -160,7 +163,7 @@ public class SketchOutlineFrame extends JFrame {
 
 		scrollPane = new JScrollPane();
 		// scrollPane.setBounds(0, 0, 260, 420);
-		scrollPane.setViewportView(tree);
+		scrollPane.setViewportView(newTree);
 		scrollPane.setBounds(0, 37, 244, 345);
 		contentPane.add(scrollPane);
 

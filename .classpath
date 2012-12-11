@@ -5,6 +5,7 @@
 	<classpathentry kind="lib" path="lib/javaparser-1.0.8.jar" sourcepath="E:/Program Files/javaparser-1.0.8/src"/>
 	<classpathentry kind="lib" path="C:/Users/QuarkNinja.XQ/processing-read-only/build/windows/work/core/library/core.jar"/>
 	<classpathentry kind="lib" path="C:/Users/QuarkNinja.XQ/processing-read-only/build/windows/work/lib/pde.jar"/>
+	<classpathentry kind="lib" path="lib/org-netbeans-swing-outline.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

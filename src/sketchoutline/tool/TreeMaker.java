@@ -62,7 +62,7 @@ public class TreeMaker {
 	 * PATH stores the path to a file that is to be read. Used for testing when
 	 * running Sketch Outline outside the PDE
 	 */
-	static String PATH = "E:/Program Files/processing-1.5/workingDir/EarthQuake_Map.java";// "E:\\TestStuff\\fft1.java";
+	static String PATH = "D:\\TestStuff\\fft1.java";
 
 	/**
 	 * Contains the entire source code of the editor
