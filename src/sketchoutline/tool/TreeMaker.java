@@ -86,8 +86,14 @@ public class TreeMaker {
 	public int firstMemberOffset = -1;
 	private boolean mainClassParsed = false;
 	private int classCount = 0;
+
+	/**
+	 * Whether the tree is to be sorted alphabetically
+	 */
 	public boolean enableSortingCodeTree = false;
+
 	// The parent editor
+
 	protected Editor editor;
 
 	/**
@@ -697,8 +703,7 @@ public class TreeMaker {
 			// if (TreeMaker.debugMode)
 			// System.out.println("Outline Tree Built.");
 
-			if (enableSortingCodeTree)
-				sortTree(codeTree);
+			sortTree(codeTree, enableSortingCodeTree);
 
 			if (hideFields)
 				removeFields(codeTree);
@@ -886,7 +891,7 @@ public class TreeMaker {
 	 * @return DefaultMutableTreeNode
 	 */
 	public DefaultMutableTreeNode getSortedCodeTree() {
-		sortTree(codeTree);
+		sortTree(codeTree, true);
 		return (DefaultMutableTreeNode) (codeTree.getChildAt(0));
 	}
 
@@ -1366,11 +1371,13 @@ public class TreeMaker {
 	 */
 
 	@SuppressWarnings("unchecked")
-	public static void sortTree(DefaultMutableTreeNode unsortedTree) {
+	public static void sortTree(DefaultMutableTreeNode unsortedTree,
+			final boolean sortAlphabetical) {
 
 		for (int i = 0; i < unsortedTree.getChildCount(); i++) {
 			if (unsortedTree.getChildAt(i).isLeaf() == false)
-				sortTree(((DefaultMutableTreeNode) unsortedTree.getChildAt(i)));
+				sortTree(((DefaultMutableTreeNode) unsortedTree.getChildAt(i)),
+						sortAlphabetical);
 		}
 
 		@SuppressWarnings({ "rawtypes" })
@@ -1382,22 +1389,34 @@ public class TreeMaker {
 				DefaultMutableTreeNode n1 = (DefaultMutableTreeNode) o1;
 				DefaultMutableTreeNode n2 = (DefaultMutableTreeNode) o2;
 
-				// o1 has child nodes but not o2, give o1 higher preference
-				if (n1.getChildCount() > 0 && n2.getChildCount() == 0) {
-					return 1;
+				TmNode a = (TmNode) (n1).getUserObject();
+				TmNode b = (TmNode) (n2).getUserObject();
+				String typeA = getType(a.node), typeB = getType(b.node);
+				
+				// When comparing unequal types, the ordering is:
+				// class, field, methods.
+				if (!typeA.equals(typeB)) {
+					if (typeA.equals("ClassOrInterfaceDeclaration")) {
+						return -1;
+					}
+
+					if (typeB.equals("ClassOrInterfaceDeclaration")) {
+						return 1;
+					}
+
+					if (typeA.equals("FieldDeclaration")) {
+						return -1;
+					}
+
+					if (typeB.equals("FieldDeclaration")) {
+						return 1;
+					}
 				}
-				
-				// o2 has child nodes but not o1, give o2 higher preference
-				else if (n2.getChildCount() > 0 && n1.getChildCount() == 0) {
-					return -1;
-				}			
-				
-				// Both are leaf nodes. Just compare 'em.
-				else {
-					TmNode a = (TmNode) (n1).getUserObject();
-					TmNode b = (TmNode) (n2).getUserObject();
+
+				if (sortAlphabetical)
 					return a.compareTo(b);
-				}
+				else
+					return -1;
 
 			}
 		});

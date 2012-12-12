@@ -85,7 +85,6 @@ public class SketchOutlineFrame extends JFrame {
 	 * Constructor for SketchOutlineFrame
 	 */
 	public SketchOutlineFrame(Editor edt) {
-		System.out.println("SO Frame con 1");
 		this.editor = edt;
 		Toolkit.setIcon(this);
 
@@ -118,7 +117,6 @@ public class SketchOutlineFrame extends JFrame {
 		// return;
 		// }
 
-		System.out.println("prepare frame 1");
 		if (thTreeMaker.treeMaker.treeCreated) {
 
 			tree = new JTree(thTreeMaker.getTree());
@@ -139,7 +137,6 @@ public class SketchOutlineFrame extends JFrame {
 				System.err.println("Parsing error - SketchOutlineFrame.");
 			okToShowFrame = false;
 		}
-		System.out.println("prepare frame 2");
 		setTitle(thTreeMaker.treeMaker.mainClassName + " - Outline");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// [width=234,height=376]
@@ -178,7 +175,7 @@ public class SketchOutlineFrame extends JFrame {
 
 		chkbxAutoUpdate = new JCheckBox("Auto");
 		chkbxAutoUpdate.setToolTipText("Auto Refresh");
-
+		chkbxAutoUpdate.setSelected(true);
 		chkbxAutoUpdate.setBounds(45, 7, 68, 23);
 		contentPane.add(chkbxAutoUpdate);
 
@@ -201,7 +198,6 @@ public class SketchOutlineFrame extends JFrame {
 		btnShowFields.setBounds(171, 4, 33, 29);
 		contentPane.add(btnShowFields);
 		btnShowFields.setIcon(new ImageIcon("data\\icons\\field_icon.png"));
-		System.out.println("prepare frame 3");
 		/*
 		 * data folder of the tool doesn't seem to import the required resource
 		 * files(icons). So retrieving it from
@@ -230,10 +226,11 @@ public class SketchOutlineFrame extends JFrame {
 			ic = new File(iconPath + File.separator + "info_icon.png");
 			btnAbout.setIcon(new ImageIcon(ic.getAbsolutePath()));
 		}
-		System.out.println("prepare frame 4");
 		// iListen
 		addListeners();
-		System.out.println("prepare frame end");
+		
+		// Start the auto update thread.
+		thTreeMaker.start();
 	}
 
 	DockTool2Base Docker = new DockTool2Base();
@@ -653,7 +650,7 @@ public class SketchOutlineFrame extends JFrame {
 				setIcon(getTreeIcon(value));
 			else
 			{
-				System.out.println("WEird: " + value.getClass().getCanonicalName());
+				System.out.println("Weird: " + value.getClass().getCanonicalName());
 			}
 
 			return this;
