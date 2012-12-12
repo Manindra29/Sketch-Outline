@@ -138,9 +138,9 @@ public class ThreadedTreeMaker implements Runnable {
 								// frame.tree.
 								// System.out.println("Row expand.");
 							}
-							if (lastRow < 0) {
-								frame.tree.setSelectionRow(0);
-							}
+//							if (lastRow < 0) {
+//								frame.tree.setSelectionRow(0);
+//							}
 						}
 						frame.tree.validate();
 						if (TreeMaker.debugMode)

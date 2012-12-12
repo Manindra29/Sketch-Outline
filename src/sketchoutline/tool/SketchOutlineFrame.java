@@ -332,7 +332,7 @@ public class SketchOutlineFrame extends JFrame {
 						.println("===========================================================");
 				System.out.println();
 				System.out
-						.println("                Sketch Outline 0.1.6 (beta)                ");
+						.println("                Sketch Outline 0.1.7 (beta)                ");
 				System.out
 						.println("                  By - Manindra Moharana                   ");
 				System.out
@@ -341,7 +341,7 @@ public class SketchOutlineFrame extends JFrame {
 				System.out
 						.println("===========================================================");
 				System.out
-						.println("<> Project page: http://code.google.com/p/sketch-outline/");
+						.println("<> Project page: https://github.com/Manindra29/Sketch-Outline");
 				System.out
 						.println("<> Processing Forum Thread: \nhttp://forum.processing.org/topic/sketch-outline-new-processing-tool-announcement");
 				System.out
