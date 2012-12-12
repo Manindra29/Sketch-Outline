@@ -13,6 +13,8 @@ import org.netbeans.swing.outline.OutlineModel;
 import org.netbeans.swing.outline.RenderDataProvider;
 import org.netbeans.swing.outline.RowModel;
 
+import processing.app.Base;
+
 import sketchoutline.tool.TreeMaker.TmNode;
 import sun.reflect.generics.tree.Tree;
 
@@ -73,8 +75,20 @@ public class OutlineTree extends Outline {
 		public RenderTehIcons() {
 			icons = new ImageIcon[10];
 			File f = new File("data" + File.separator + "icons");
+			if(!f.exists())
+			{
+				String iconPath = (Base.getSketchbookFolder()
+						.getAbsolutePath())
+
+						+ File.separator
+						+ "tools"
+						+ File.separator
+						+ "SketchOutline"
+						+ File.separator + "data" + File.separator + "icons";
+				f = new File(iconPath); 
+			}
 			File[] iconfiles = f.listFiles();
-			if (iconfiles.length != 10)
+			if (iconfiles.length != 15)
 				System.err
 						.println("Icon files have been tamepered with. Zomg!");
 			for (int i = 0; i < icons.length; i++) {

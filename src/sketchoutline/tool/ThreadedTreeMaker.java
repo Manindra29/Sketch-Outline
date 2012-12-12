@@ -123,7 +123,7 @@ public class ThreadedTreeMaker implements Runnable {
 
 					protected void done() {
 						frame.tree.setModel(new DefaultTreeModel(getTree()));
-						frame.newTree.updateTree(getTree());
+						// frame.newTree.updateTree(getTree());
 						((DefaultTreeModel) frame.tree.getModel()).reload();
 
 						// Expand trees only if user is not interacting with the

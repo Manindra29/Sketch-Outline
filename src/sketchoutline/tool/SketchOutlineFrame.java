@@ -85,7 +85,7 @@ public class SketchOutlineFrame extends JFrame {
 	 * Constructor for SketchOutlineFrame
 	 */
 	public SketchOutlineFrame(Editor edt) {
-
+		System.out.println("SO Frame con 1");
 		this.editor = edt;
 		Toolkit.setIcon(this);
 
@@ -118,10 +118,16 @@ public class SketchOutlineFrame extends JFrame {
 //			return;
 //		}
 
+		System.out.println("prepare frame 1");
 		if (thTreeMaker.treeMaker.treeCreated) {
 
 			tree = new JTree(thTreeMaker.getTree());
-			newTree = new OutlineTree(thTreeMaker.getTree());
+			try {
+				newTree = new OutlineTree(thTreeMaker.getTree());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			// treeMaker.offSet - 1;
 			tree.setExpandsSelectedPaths(true);
 			if (editor != null)
@@ -138,7 +144,7 @@ public class SketchOutlineFrame extends JFrame {
 				System.err.println("Parsing error - SketchOutlineFrame.");
 			okToShowFrame = false;
 		}
-
+		System.out.println("prepare frame 2");
 		setTitle(thTreeMaker.treeMaker.mainClassName + " - Outline");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// [width=234,height=376]
@@ -170,7 +176,7 @@ public class SketchOutlineFrame extends JFrame {
 		btnRefresh = new JButton("");
 		btnRefresh.setToolTipText("Refresh Outline");
 
-		btnRefresh.setIcon(new ImageIcon(("src\\refresh_icon.png")));
+		btnRefresh.setIcon(new ImageIcon(("data\\icons\\refresh_icon.png")));
 
 		btnRefresh.setBounds(6, 4, 33, 29);
 		contentPane.add(btnRefresh);
@@ -183,7 +189,7 @@ public class SketchOutlineFrame extends JFrame {
 
 		btnSortTree = new JToggleButton("");
 		btnSortTree.setToolTipText("Display Alphabetically");
-		btnSortTree.setIcon(new ImageIcon(("src\\sort_icon.png")));
+		btnSortTree.setIcon(new ImageIcon(("data\\icons\\sort_icon.png")));
 		// sortTree.setIcon(new ImageIcon("data/a to z icon.png"));
 		btnSortTree.setBounds(134, 4, 33, 29);
 		contentPane.add(btnSortTree);
@@ -192,15 +198,15 @@ public class SketchOutlineFrame extends JFrame {
 		btnAbout.setToolTipText("About Sketch Outline");
 
 		btnAbout.setBounds(208, 4, 33, 29);
-		btnAbout.setIcon(new ImageIcon(("src\\info_icon.png")));
+		btnAbout.setIcon(new ImageIcon(("data\\icons\\info_icon.png")));
 		contentPane.add(btnAbout);
 
 		btnShowFields = new JToggleButton("");
 		btnShowFields.setToolTipText("Hide/Show Fields");
 		btnShowFields.setBounds(171, 4, 33, 29);
 		contentPane.add(btnShowFields);
-		btnShowFields.setIcon(new ImageIcon("src\\field_icon.png"));
-
+		btnShowFields.setIcon(new ImageIcon("data\\icons\\field_icon.png"));
+		System.out.println("prepare frame 3");
 		/*
 		 * data folder of the tool doesn't seem to import the required resource files(icons).
 		 * So retrieving it from sketchbook\tools\SketchOutline\src.
@@ -215,7 +221,7 @@ public class SketchOutlineFrame extends JFrame {
 					+ "tools"
 					+ File.separator
 					+ "SketchOutline"
-					+ File.separator + "src";
+					+ File.separator + "data" + File.separator + "icons";
 			File ic = new File(iconPath + File.separator + "refresh_icon.png");
 			btnRefresh.setIcon(new ImageIcon(ic.getAbsolutePath()));
 			
@@ -228,10 +234,10 @@ public class SketchOutlineFrame extends JFrame {
 			ic = new File(iconPath + File.separator + "info_icon.png");
 			btnAbout.setIcon(new ImageIcon(ic.getAbsolutePath()));
 		}
-
+		System.out.println("prepare frame 4");
 		// iListen
 		addListeners();
-
+		System.out.println("prepare frame end");
 	}
 
 	DockTool2Base Docker = new DockTool2Base();
@@ -373,6 +379,104 @@ public class SketchOutlineFrame extends JFrame {
 				worker.execute();
 			}
 		});
+		
+		newTree.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+
+			}
+			
+			/**
+			 * Scroll to definition happens here 
+			 */
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void mouseClicked(final MouseEvent event) {
+
+				SwingWorker worker = new SwingWorker() {
+
+					@Override
+					protected Object doInBackground() throws Exception {
+						return null;
+					}
+
+					protected void done() {
+						System.out.println("mouseClicked on new tree");
+						try {
+
+							if (thisFrame.hasFocus())
+								return;
+							DefaultMutableTreeNode n = (DefaultMutableTreeNode) tree
+									.getLastSelectedPathComponent();
+							if (n == null)
+								return;
+							// thTreeMaker.lastpath = event.getPath();
+							if (lastpath != null)
+								thTreeMaker.lastRow = (tree
+										.getRowForPath(lastpath));
+							//
+							// System.out.println("tree select: " + ",, "
+							// + thTreeMaker.lastRow);
+							TmNode tn = (TmNode) n.getUserObject();
+							// System.out.println("Clicked on: " + tn.label +
+							// " - "
+							// + tn.node.getBeginLine());
+
+							offset = thTreeMaker.treeMaker.xyToOffset(
+									tn.node.getBeginLine()
+											- thTreeMaker.treeMaker.mainClassLineOffset,
+									tn.node.getBeginColumn());
+							// =
+							// editor.getTextArea().xyToOffset(tn.node.getBeginLine()-
+							// thTreeMaker.treeMaker.mainOffSet,
+							// tn.node.getBeginColumn());
+
+							// System.out.print("Line no: "
+							// + (tn.node.getBeginLine() -
+							// thTreeMaker.treeMaker.mainClassLineOffset));
+							// + "," + tn.node.getBeginColumn());
+							// System.out.println("Calculated Offset: " +
+							// offset);
+							//
+							// System.out.println("Editor offset: "
+							// + editor.getCaretOffset());
+
+							if (editor.getCaretOffset() != offset) {
+								// System.out.println("offset unequal");
+								editor.toFront();
+								editor.setSelection(offset, offset);
+							} else {
+								// System.out.println("Offset fine");
+							}
+
+						} catch (Exception ex) {
+							System.out.println("Error positioning cursor."
+									+ ex.toString());
+							if (TreeMaker.debugMode)
+								ex.printStackTrace();
+						}
+					}
+				};
+				worker.execute();
+			}
+		});
+		System.out.println("addListeners2");
 		tree.addMouseListener(new MouseListener() {
 
 			@Override

@@ -56,7 +56,7 @@ public class TreeMaker {
 	 * Controls whether stack traces and other debugging messages are displayed
 	 * when some exception/error occurs.
 	 */
-	static boolean debugMode = false;
+	static boolean debugMode = true;
 
 	/**
 	 * PATH stores the path to a file that is to be read. Used for testing when
