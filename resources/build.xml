@@ -330,7 +330,7 @@ ${line}
 		<exec executable="C:/Users/QuarkNinja.XQ/processing-read-only/build/windows/work/processing.exe" spawn="true" />
 
 		<echo>
-			Launching Processing from: E:/Program Files/processing-1.5/processing.exe
+			Launching Processing from: C:/Users/QuarkNinja.XQ/processing-read-only/build/windows/work/processing.exe
 		</echo>
 	</target>
 

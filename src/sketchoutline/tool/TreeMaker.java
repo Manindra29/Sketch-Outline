@@ -62,7 +62,7 @@ public class TreeMaker {
 	 * PATH stores the path to a file that is to be read. Used for testing when
 	 * running Sketch Outline outside the PDE
 	 */
-	static String PATH = "D:\\TestStuff\\fft1.java";
+	static String PATH = "D:\\TestStuff\\UMLTest1.java";
 
 	/**
 	 * Contains the entire source code of the editor
@@ -1379,22 +1379,26 @@ public class TreeMaker {
 
 			@Override
 			public int compare(Object o1, Object o2) {
-				if (((DefaultMutableTreeNode) o1).getChildCount() == ((DefaultMutableTreeNode) o2).getChildCount() ) {
-					TmNode a = (TmNode) ((DefaultMutableTreeNode) o1)
-							.getUserObject();
-					TmNode b = (TmNode) ((DefaultMutableTreeNode) o2)
-							.getUserObject();
-					return a.compareTo(b);
-				}
+				DefaultMutableTreeNode n1 = (DefaultMutableTreeNode) o1;
+				DefaultMutableTreeNode n2 = (DefaultMutableTreeNode) o2;
+
 				// o1 has child nodes but not o2, give o1 higher preference
-				else if (((DefaultMutableTreeNode) o1).getChildCount() > 0
-						&& ((DefaultMutableTreeNode) o2).getChildCount() == 0){
+				if (n1.getChildCount() > 0 && n2.getChildCount() == 0) {
 					return 1;
 				}
-				// o2 has child nodes but not o1, give o2 higher preference
-				else
-					return -1;
 				
+				// o2 has child nodes but not o1, give o2 higher preference
+				else if (n2.getChildCount() > 0 && n1.getChildCount() == 0) {
+					return -1;
+				}			
+				
+				// Both are leaf nodes. Just compare 'em.
+				else {
+					TmNode a = (TmNode) (n1).getUserObject();
+					TmNode b = (TmNode) (n2).getUserObject();
+					return a.compareTo(b);
+				}
+
 			}
 		});
 		unsortedTree.removeAllChildren();

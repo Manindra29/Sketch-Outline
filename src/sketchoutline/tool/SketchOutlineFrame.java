@@ -67,7 +67,8 @@ public class SketchOutlineFrame extends JFrame {
 			public void run() {
 				try {
 					// TreeMaker tm = new TreeMaker(TreeMaker.PATH);
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					UIManager.setLookAndFeel(UIManager
+							.getSystemLookAndFeelClassName());
 					SketchOutlineFrame frame = new SketchOutlineFrame(null);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,7 +80,6 @@ public class SketchOutlineFrame extends JFrame {
 	}
 
 	JFrame thisFrame = this;
-	OutlineTree newTree;
 
 	/**
 	 * Constructor for SketchOutlineFrame
@@ -109,25 +109,20 @@ public class SketchOutlineFrame extends JFrame {
 	 */
 	public void prepareFrame() {
 
-//		if (thTreeMaker.treeMaker.basicMode) {
-//			System.out.println("Sketch Outline can't be used in BASIC mode.");
-//			System.out
-//					.println("For more info, visit: http://processing.org/reference/environment/");
-//			okToShowFrame = false;
-//			dispose();
-//			return;
-//		}
+		// if (thTreeMaker.treeMaker.basicMode) {
+		// System.out.println("Sketch Outline can't be used in BASIC mode.");
+		// System.out
+		// .println("For more info, visit: http://processing.org/reference/environment/");
+		// okToShowFrame = false;
+		// dispose();
+		// return;
+		// }
 
 		System.out.println("prepare frame 1");
 		if (thTreeMaker.treeMaker.treeCreated) {
 
 			tree = new JTree(thTreeMaker.getTree());
-			try {
-				newTree = new OutlineTree(thTreeMaker.getTree());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			tree.setCellRenderer(new TehRenderer());
 			// treeMaker.offSet - 1;
 			tree.setExpandsSelectedPaths(true);
 			if (editor != null)
@@ -169,7 +164,7 @@ public class SketchOutlineFrame extends JFrame {
 
 		scrollPane = new JScrollPane();
 		// scrollPane.setBounds(0, 0, 260, 420);
-		scrollPane.setViewportView(newTree);
+		scrollPane.setViewportView(tree);
 		scrollPane.setBounds(0, 37, 244, 345);
 		contentPane.add(scrollPane);
 
@@ -208,8 +203,9 @@ public class SketchOutlineFrame extends JFrame {
 		btnShowFields.setIcon(new ImageIcon("data\\icons\\field_icon.png"));
 		System.out.println("prepare frame 3");
 		/*
-		 * data folder of the tool doesn't seem to import the required resource files(icons).
-		 * So retrieving it from sketchbook\tools\SketchOutline\src.
+		 * data folder of the tool doesn't seem to import the required resource
+		 * files(icons). So retrieving it from
+		 * sketchbook\tools\SketchOutline\src.
 		 * 
 		 * I know it ain't text book style, but just works.
 		 */
@@ -224,13 +220,13 @@ public class SketchOutlineFrame extends JFrame {
 					+ File.separator + "data" + File.separator + "icons";
 			File ic = new File(iconPath + File.separator + "refresh_icon.png");
 			btnRefresh.setIcon(new ImageIcon(ic.getAbsolutePath()));
-			
+
 			ic = new File(iconPath + File.separator + "sort_icon.png");
 			btnSortTree.setIcon(new ImageIcon(ic.getAbsolutePath()));
-			
+
 			ic = new File(iconPath + File.separator + "field_icon.png");
 			btnShowFields.setIcon(new ImageIcon(ic.getAbsolutePath()));
-			
+
 			ic = new File(iconPath + File.separator + "info_icon.png");
 			btnAbout.setIcon(new ImageIcon(ic.getAbsolutePath()));
 		}
@@ -357,8 +353,7 @@ public class SketchOutlineFrame extends JFrame {
 						.println("<> Sketch Outline Debug Mode - Hold down shift key and click refresh.");
 			}
 		});
-		
-		
+
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(final TreeSelectionEvent event) {
 				@SuppressWarnings("rawtypes")
@@ -376,114 +371,10 @@ public class SketchOutlineFrame extends JFrame {
 				worker.execute();
 			}
 		});
-		
-		newTree.addMouseListener(new MouseListener() {
 
-			@Override
-			public void mouseReleased(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-
-			}
-			
-			/**
-			 * Scroll to definition happens here 
-			 */
-			@SuppressWarnings("rawtypes")
-			@Override
-			public void mouseClicked(final MouseEvent event) {
-
-				SwingWorker worker = new SwingWorker() {
-
-					@Override
-					protected Object doInBackground() throws Exception {
-						return null;
-					}
-
-					protected void done() {
-						System.out.println("mouseClicked on new tree");
-						try {
-							// The next set of listerners are needed only if a PDE is around
-							
-							if (thisFrame.hasFocus())
-								return;
-							int x = newTree.getSelectedRow();
-							System.out.println("Row clicked: " + x);
-							if (editor == null)
-								return;
-							if(x < 1)
-								return;
-							DefaultMutableTreeNode n = (DefaultMutableTreeNode)
-									thTreeMaker.getTree().getChildAt(x - 1); 
-							if (n == null)
-								return;
-							// thTreeMaker.lastpath = event.getPath();
-							if (lastpath != null)
-								thTreeMaker.lastRow = (tree
-										.getRowForPath(lastpath));
-							//
-							// System.out.println("tree select: " + ",, "
-							// + thTreeMaker.lastRow);
-							TmNode tn = (TmNode) n.getUserObject();
-							// System.out.println("Clicked on: " + tn.label +
-							// " - "
-							// + tn.node.getBeginLine());
-
-							offset = thTreeMaker.treeMaker.xyToOffset(
-									tn.node.getBeginLine()
-											- thTreeMaker.treeMaker.mainClassLineOffset,
-									tn.node.getBeginColumn());
-							// =
-							// editor.getTextArea().xyToOffset(tn.node.getBeginLine()-
-							// thTreeMaker.treeMaker.mainOffSet,
-							// tn.node.getBeginColumn());
-
-							// System.out.print("Line no: "
-							// + (tn.node.getBeginLine() -
-							// thTreeMaker.treeMaker.mainClassLineOffset));
-							// + "," + tn.node.getBeginColumn());
-							// System.out.println("Calculated Offset: " +
-							// offset);
-							//
-							// System.out.println("Editor offset: "
-							// + editor.getCaretOffset());
-
-							if (editor.getCaretOffset() != offset) {
-								// System.out.println("offset unequal");
-								editor.toFront();
-								editor.setSelection(offset, offset);
-							} else {
-								// System.out.println("Offset fine");
-							}
-
-						} catch (Exception ex) {
-							System.out.println("Error positioning cursor."
-									+ ex.toString());
-							if (TreeMaker.debugMode)
-								ex.printStackTrace();
-						}
-					}
-				};
-				worker.execute();
-			}
-		});
-		System.out.println("addListeners2");
 		// The next set of listerners are needed only if a PDE is around
-				if (editor == null)
-					return;
+		if (editor == null)
+			return;
 		tree.addMouseListener(new MouseListener() {
 
 			@Override
@@ -505,9 +396,9 @@ public class SketchOutlineFrame extends JFrame {
 			public void mouseEntered(MouseEvent e) {
 
 			}
-			
+
 			/**
-			 * Scroll to definition happens here 
+			 * Scroll to definition happens here
 			 */
 			@SuppressWarnings("rawtypes")
 			@Override
@@ -724,6 +615,74 @@ public class SketchOutlineFrame extends JFrame {
 		setVisible(false);
 	}
 
+	private class TehRenderer extends DefaultTreeCellRenderer {
+
+		ImageIcon icons[];
+
+		public TehRenderer() {
+			icons = new ImageIcon[15];
+			File f = new File("data" + File.separator + "icons");
+			if (!f.exists()) {
+				String iconPath = (Base.getSketchbookFolder().getAbsolutePath())
+
+						+ File.separator
+						+ "tools"
+						+ File.separator
+						+ "SketchOutline"
+						+ File.separator
+						+ "data"
+						+ File.separator + "icons";
+				f = new File(iconPath);
+			}
+			File[] iconfiles = f.listFiles();
+			if (iconfiles.length != 15)
+				System.err
+						.println("Icon files have been tamepered with. Zomg!");
+			for (int i = 0; i < icons.length; i++) {
+				icons[i] = new ImageIcon(iconfiles[i].getAbsolutePath());
+			}
+		}
+
+		public Component getTreeCellRendererComponent(JTree tree, Object value,
+				boolean sel, boolean expanded, boolean leaf, int row,
+				boolean hasFocus) {
+
+			super.getTreeCellRendererComponent(tree, value, sel, expanded,
+					leaf, row, hasFocus);
+			if (value instanceof DefaultMutableTreeNode)
+				setIcon(getTreeIcon(value));
+			else
+			{
+				System.out.println("WEird: " + value.getClass().getCanonicalName());
+			}
+
+			return this;
+		}
+
+		public javax.swing.Icon getTreeIcon(Object o) {
+			if (o instanceof DefaultMutableTreeNode) {
+
+				TmNode tmnode = (TmNode) ((DefaultMutableTreeNode) o)
+						.getUserObject();
+				String type = TreeMaker.getType(tmnode.node);
+				if (type.equals("MethodDeclaration")
+						|| type.equals("ConstructorDeclaration"))
+					return icons[12];
+				if (type.equals("ClassOrInterfaceDeclaration"))
+					return icons[0];
+				if (type.equals("FieldDeclaration"))
+					return icons[1];
+			}
+
+			return null;
+
+		}
+
+		private boolean isTutorialBook(Object value) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+	}
 
 	/**
 	 * Implements the docking feature of the tool - The frame sticks to the
