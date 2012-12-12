@@ -358,9 +358,6 @@ public class SketchOutlineFrame extends JFrame {
 			}
 		});
 		
-		// The next set of listerners are needed only if a PDE is around
-		if (editor == null)
-			return;
 		
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(final TreeSelectionEvent event) {
@@ -419,11 +416,18 @@ public class SketchOutlineFrame extends JFrame {
 					protected void done() {
 						System.out.println("mouseClicked on new tree");
 						try {
-
+							// The next set of listerners are needed only if a PDE is around
+							
 							if (thisFrame.hasFocus())
 								return;
-							DefaultMutableTreeNode n = (DefaultMutableTreeNode) tree
-									.getLastSelectedPathComponent();
+							int x = newTree.getSelectedRow();
+							System.out.println("Row clicked: " + x);
+							if (editor == null)
+								return;
+							if(x < 1)
+								return;
+							DefaultMutableTreeNode n = (DefaultMutableTreeNode)
+									thTreeMaker.getTree().getChildAt(x - 1); 
 							if (n == null)
 								return;
 							// thTreeMaker.lastpath = event.getPath();
@@ -477,6 +481,9 @@ public class SketchOutlineFrame extends JFrame {
 			}
 		});
 		System.out.println("addListeners2");
+		// The next set of listerners are needed only if a PDE is around
+				if (editor == null)
+					return;
 		tree.addMouseListener(new MouseListener() {
 
 			@Override
