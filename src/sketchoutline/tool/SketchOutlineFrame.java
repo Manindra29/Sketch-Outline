@@ -51,7 +51,7 @@ public class SketchOutlineFrame extends JFrame {
 	private JPanel contentPane;
 	private JScrollPane scrollPane;
 	public JTree tree;
-	TreeMaker treeMaker = null;
+	// TreeMaker treeMaker = null;
 	ThreadedTreeMaker thTreeMaker = null;
 	Editor editor;
 	int offset;
@@ -109,14 +109,14 @@ public class SketchOutlineFrame extends JFrame {
 	 */
 	public void prepareFrame() {
 
-		if (thTreeMaker.treeMaker.basicMode) {
-			System.out.println("Sketch Outline can't be used in BASIC mode.");
-			System.out
-					.println("For more info, visit: http://processing.org/reference/environment/");
-			okToShowFrame = false;
-			dispose();
-			return;
-		}
+		// if (thTreeMaker.treeMaker.basicMode) {
+		// System.out.println("Sketch Outline can't be used in BASIC mode.");
+		// System.out
+		// .println("For more info, visit: http://processing.org/reference/environment/");
+		// okToShowFrame = false;
+		// dispose();
+		// return;
+		// }
 
 		if (thTreeMaker.treeMaker.treeCreated) {
 
@@ -661,30 +661,34 @@ public class SketchOutlineFrame extends JFrame {
 
 	private class TehRenderer extends DefaultTreeCellRenderer {
 
-		ImageIcon icons[];
+		// ImageIcon icons[];
+		private final ImageIcon classIcon, fieldIcon, methodIcon;
 
 		public TehRenderer() {
-			icons = new ImageIcon[15];
-			File f = new File("data" + File.separator + "icons");
-			if (!f.exists()) {
-				String iconPath = (Base.getSketchbookFolder().getAbsolutePath())
+			// icons = new ImageIcon[15];
+			// File f = new File("data" + File.separator + "icons");
+			String iconPath = "data" + File.separator + "icons";
+			if (editor != null) {
+				iconPath = (Base.getSketchbookFolder().getAbsolutePath())
 
-						+ File.separator
-						+ "tools"
-						+ File.separator
-						+ "SketchOutline"
-						+ File.separator
-						+ "data"
-						+ File.separator + "icons";
-				f = new File(iconPath);
+				+ File.separator + "tools" + File.separator + "SketchOutline"
+						+ File.separator + "data" + File.separator + "icons";
+				;
 			}
-			File[] iconfiles = f.listFiles();
-			if (iconfiles.length != 15)
-				System.err
-						.println("Icon files have been tamepered with. Zomg!");
-			for (int i = 0; i < icons.length; i++) {
-				icons[i] = new ImageIcon(iconfiles[i].getAbsolutePath());
-			}
+			// File[] iconfiles = f.listFiles();
+			// if (iconfiles.length != 15)
+			// System.err
+			// .println("Icon files have been tamepered with. Zomg!");
+			// for (int i = 0; i < icons.length; i++) {
+			// icons[i] = new ImageIcon(iconfiles[i].getAbsolutePath());
+			// }
+
+			classIcon = new ImageIcon(iconPath + File.separator
+					+ "class_obj.png");
+			methodIcon = new ImageIcon(iconPath + File.separator
+					+ "methpub_obj.png");
+			fieldIcon = new ImageIcon(iconPath + File.separator
+					+ "field_default_obj.png");
 		}
 
 		public Component getTreeCellRendererComponent(JTree tree, Object value,
@@ -711,11 +715,11 @@ public class SketchOutlineFrame extends JFrame {
 				String type = TreeMaker.getType(tmnode.node);
 				if (type.equals("MethodDeclaration")
 						|| type.equals("ConstructorDeclaration"))
-					return icons[12];
+					return methodIcon;
 				if (type.equals("ClassOrInterfaceDeclaration"))
-					return icons[0];
+					return classIcon;
 				if (type.equals("FieldDeclaration"))
-					return icons[1];
+					return fieldIcon;
 			}
 
 			return null;

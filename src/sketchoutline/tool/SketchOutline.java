@@ -56,7 +56,7 @@ public class SketchOutline implements Tool {
 
 	public void run() {
 
-		System.out.println("Sketch Outline 0.1.6 (beta)");
+		System.out.println("Sketch Outline 0.1.7 (beta)");
 		System.out.println("By - Manindra Moharana | http://www.mkmoharana.com/");
 		String mode = editor.getMode().getTitle();
 		if (mode.equals("Android") || mode.equals("JavaScript")) {

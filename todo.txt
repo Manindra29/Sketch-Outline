@@ -5,15 +5,16 @@ O - to be pwned, X - pwned
 
 Renderer
 --------
-O - Replace the tree model thingy with Swing Outline from Netbeans.
 O - Implement Custom Icons for each node type, from here: 
 	http://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.jdt.doc.user/reference/ref-icons.htm
 	http://netbeans.dzone.com/news/taking-new-swing-tree-table-a-
+	Stage 1 is done.
 
 General
 -------
-O - Support Basic Mode. Seems kinda stupid it was suggested so late.
-O - Decide about making Auto refresh permanent.
+X - Support Basic Mode.
+X - Decide about making Auto refresh permanent.
 O - Eclipse JDT Core - is it time ta switch? Hell yes.
+
 
 
