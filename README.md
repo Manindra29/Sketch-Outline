@@ -19,5 +19,6 @@ Grab the latest version from [here](https://github.com/Manindra29/Sketch-Outline
 5. Restart Processing.
 
 ------------------------------------------------------------------------------------
-
-Switched to github now from [google code](http://code.google.com/p/sketch-outline/).
+Participate in the discussion on the [Processing forum thread](https://forum.processing.org/topic/sketch-outline-new-processing-tool-announcement)
+<br/>
+Switched to GitHub now from [google code](http://code.google.com/p/sketch-outline/).
