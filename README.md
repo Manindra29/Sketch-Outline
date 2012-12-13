@@ -18,7 +18,6 @@ Grab the latest version from [here](https://github.com/Manindra29/Sketch-Outline
 4. Extract the contents of the downloaded .zip into the tools folder.
 5. Restart Processing.
 
-<br/>
 ------------------------------------------------------------------------------------
 
 Switched to github now from [google code](http://code.google.com/p/sketch-outline/).
