@@ -36,6 +36,7 @@ import java.io.File;
 import java.net.URL;
 import javax.swing.*;
 import javax.swing.tree.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 
 import processing.app.*;
@@ -166,10 +167,35 @@ public class SketchOutlineFrame extends JFrame {
 		scrollPane.setBounds(0, 37, 244, 345);
 		contentPane.add(scrollPane);
 
+		String iconPath = "data" + File.separator + "icons" + File.separator;
+		/*
+		 * data folder of the tool doesn't seem to import the required resource
+		 * files(icons). So retrieving it from
+		 * sketchbook\tools\SketchOutline\src.
+		 * 
+		 * I know it ain't text book style, but just works.
+		 */
+		if (editor != null) {
+			iconPath = (editor.getBase().getSketchbookFolder()
+					.getAbsolutePath())
+
+					+ File.separator
+					+ "tools"
+					+ File.separator
+					+ "SketchOutline"
+					+ File.separator
+					+ "data"
+					+ File.separator
+					+ "icons"
+					+ File.separator;
+		}
+
+		ImageIcon ic;
+
 		btnRefresh = new JButton("");
 		btnRefresh.setToolTipText("Refresh Outline");
-
-		btnRefresh.setIcon(new ImageIcon(("data\\icons\\refresh_icon.png")));
+		ic = new ImageIcon((iconPath + "refresh_icon.png"));
+		btnRefresh.setIcon(ic);
 
 		btnRefresh.setBounds(6, 4, 33, 29);
 		contentPane.add(btnRefresh);
@@ -182,51 +208,23 @@ public class SketchOutlineFrame extends JFrame {
 
 		btnSortTree = new JToggleButton("");
 		btnSortTree.setToolTipText("Display Alphabetically");
-		btnSortTree.setIcon(new ImageIcon(("data\\icons\\sort_icon.png")));
-		// sortTree.setIcon(new ImageIcon("data/a to z icon.png"));
+		ic = new ImageIcon((iconPath + "sort_icon.png"));
+		btnSortTree.setIcon(ic);
 		btnSortTree.setBounds(134, 4, 33, 29);
 		contentPane.add(btnSortTree);
 
 		btnAbout = new JButton("");
 		btnAbout.setToolTipText("About Sketch Outline");
-
 		btnAbout.setBounds(208, 4, 33, 29);
-		btnAbout.setIcon(new ImageIcon(("data\\icons\\info_icon.png")));
+		btnAbout.setIcon(new ImageIcon((iconPath + "info_icon.png")));
 		contentPane.add(btnAbout);
 
 		btnShowFields = new JToggleButton("");
 		btnShowFields.setToolTipText("Hide/Show Fields");
 		btnShowFields.setBounds(171, 4, 33, 29);
 		contentPane.add(btnShowFields);
-		btnShowFields.setIcon(new ImageIcon("data\\icons\\field_icon.png"));
-		/*
-		 * data folder of the tool doesn't seem to import the required resource
-		 * files(icons). So retrieving it from
-		 * sketchbook\tools\SketchOutline\src.
-		 * 
-		 * I know it ain't text book style, but just works.
-		 */
-		if (editor != null) {
-			String iconPath = (editor.getBase().getSketchbookFolder()
-					.getAbsolutePath())
+		btnShowFields.setIcon(new ImageIcon(iconPath + "field_icon.png"));
 
-					+ File.separator
-					+ "tools"
-					+ File.separator
-					+ "SketchOutline"
-					+ File.separator + "data" + File.separator + "icons";
-			File ic = new File(iconPath + File.separator + "refresh_icon.png");
-			btnRefresh.setIcon(new ImageIcon(ic.getAbsolutePath()));
-
-			ic = new File(iconPath + File.separator + "sort_icon.png");
-			btnSortTree.setIcon(new ImageIcon(ic.getAbsolutePath()));
-
-			ic = new File(iconPath + File.separator + "field_icon.png");
-			btnShowFields.setIcon(new ImageIcon(ic.getAbsolutePath()));
-
-			ic = new File(iconPath + File.separator + "info_icon.png");
-			btnAbout.setIcon(new ImageIcon(ic.getAbsolutePath()));
-		}
 		// iListen
 		addListeners();
 
@@ -305,7 +303,6 @@ public class SketchOutlineFrame extends JFrame {
 
 		btnSortTree.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
 				thTreeMaker.treeMaker.enableSortingCodeTree = btnSortTree
 						.isSelected();
 				if (!thTreeMaker.updateTree())
@@ -850,4 +847,5 @@ public class SketchOutlineFrame extends JFrame {
 			frame.setLocation(x, y);
 		}
 	}
+
 }
