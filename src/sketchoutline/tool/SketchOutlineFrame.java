@@ -37,6 +37,7 @@ import java.net.URL;
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
+
 import processing.app.*;
 import processing.app.Toolkit;
 import sketchoutline.tool.TreeMaker.TmNode;
@@ -108,14 +109,14 @@ public class SketchOutlineFrame extends JFrame {
 	 */
 	public void prepareFrame() {
 
-		// if (thTreeMaker.treeMaker.basicMode) {
-		// System.out.println("Sketch Outline can't be used in BASIC mode.");
-		// System.out
-		// .println("For more info, visit: http://processing.org/reference/environment/");
-		// okToShowFrame = false;
-		// dispose();
-		// return;
-		// }
+		if (thTreeMaker.treeMaker.basicMode) {
+			System.out.println("Sketch Outline can't be used in BASIC mode.");
+			System.out
+					.println("For more info, visit: http://processing.org/reference/environment/");
+			okToShowFrame = false;
+			dispose();
+			return;
+		}
 
 		if (thTreeMaker.treeMaker.treeCreated) {
 
@@ -228,15 +229,71 @@ public class SketchOutlineFrame extends JFrame {
 		}
 		// iListen
 		addListeners();
-		
+
 		// Start the auto update thread.
 		thTreeMaker.start();
+	}
+
+	private void scrollToLocation() {
+		try {
+
+			if (thisFrame.hasFocus())
+				return;
+			DefaultMutableTreeNode n = (DefaultMutableTreeNode) tree
+					.getLastSelectedPathComponent();
+			if (n == null)
+				return;
+			// thTreeMaker.lastpath = event.getPath();
+			if (lastpath != null)
+				thTreeMaker.lastRow = (tree.getRowForPath(lastpath));
+			//
+			// System.out.println("tree select: " + ",, "
+			// + thTreeMaker.lastRow);
+			TmNode tn = (TmNode) n.getUserObject();
+			// System.out.println("Clicked on: " + tn.label +
+			// " - "
+			// + tn.node.getBeginLine());
+
+			offset = thTreeMaker.treeMaker.xyToOffset(tn.node.getBeginLine()
+					- thTreeMaker.treeMaker.mainClassLineOffset,
+					tn.node.getBeginColumn());
+			// =
+			// editor.getTextArea().xyToOffset(tn.node.getBeginLine()-
+			// thTreeMaker.treeMaker.mainOffSet,
+			// tn.node.getBeginColumn());
+
+			// System.out.print("Line no: "
+			// + (tn.node.getBeginLine() -
+			// thTreeMaker.treeMaker.mainClassLineOffset));
+			// + "," + tn.node.getBeginColumn());
+			// System.out.println("Calculated Offset: " +
+			// offset);
+			//
+			// System.out.println("Editor offset: "
+			// + editor.getCaretOffset());
+
+			if (editor.getCaretOffset() != offset) {
+				// System.out.println("offset unequal");
+				editor.toFront();
+				editor.setSelection(offset, offset);
+				editor.getTextArea().repaint();
+			} else {
+				// System.out.println("Offset fine");
+			}
+
+		} catch (Exception ex) {
+			System.out.println("Error positioning cursor." + ex.toString());
+			if (TreeMaker.debugMode)
+				ex.printStackTrace();
+		}
 	}
 
 	DockTool2Base Docker = new DockTool2Base();
 	private JToggleButton btnSortTree;
 	private JButton btnAbout;
 	private JToggleButton btnShowFields;
+	public boolean listenForTreeExpand = true;
+	public boolean listenForSelection = true;
 
 	/**
 	 * Adds {@link ComponentListener} and {@link WindowListener} listeners to
@@ -351,6 +408,61 @@ public class SketchOutlineFrame extends JFrame {
 			}
 		});
 
+		tree.addTreeExpansionListener(new TreeExpansionListener() {
+
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void treeExpanded(final TreeExpansionEvent e) {
+				SwingWorker worker = new SwingWorker() {
+
+					@Override
+					protected Object doInBackground() throws Exception {
+						return null;
+					}
+
+					protected void done() {
+						if (!listenForTreeExpand)
+							return;
+						// System.out.println("Expand: " + e.getPath() + " , "
+						// + tree.getRowForPath(e.getPath()));
+						if (tree.getRowForPath(e.getPath()) >= 0)
+							thTreeMaker.lastExpandedRows.add(tree
+									.getRowForPath(e.getPath()));
+					}
+				};
+				worker.execute();
+			}
+
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void treeCollapsed(final TreeExpansionEvent e) {
+				SwingWorker worker = new SwingWorker() {
+
+					@Override
+					protected Object doInBackground() throws Exception {
+						return null;
+					}
+
+					protected void done() {
+						if (!listenForTreeExpand)
+							return;
+						// System.out.println("Collapse: " + e.getPath() + " , "
+						// + tree.getRowForPath(e.getPath()));
+						if (tree.getRowForPath(e.getPath()) >= 0)
+							thTreeMaker.lastExpandedRows.remove(tree
+									.getRowForPath(e.getPath()));
+					}
+				};
+				worker.execute();
+			}
+		});
+
+		// The next set of listerners are needed only if a PDE is around
+		if (editor == null)
+			return;
+		/**
+		 * Scroll to definition happens here
+		 */
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(final TreeSelectionEvent event) {
 				@SuppressWarnings("rawtypes")
@@ -363,110 +475,45 @@ public class SketchOutlineFrame extends JFrame {
 
 					protected void done() {
 						lastpath = event.getPath();
+						scrollToLocation();
 					}
 				};
 				worker.execute();
 			}
 		});
 
-		// The next set of listerners are needed only if a PDE is around
-		if (editor == null)
-			return;
-		tree.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-
-			}
-
-			/**
-			 * Scroll to definition happens here
-			 */
-			@SuppressWarnings("rawtypes")
-			@Override
-			public void mouseClicked(final MouseEvent event) {
-
-				SwingWorker worker = new SwingWorker() {
-
-					@Override
-					protected Object doInBackground() throws Exception {
-						return null;
-					}
-
-					protected void done() {
-						try {
-
-							if (thisFrame.hasFocus())
-								return;
-							DefaultMutableTreeNode n = (DefaultMutableTreeNode) tree
-									.getLastSelectedPathComponent();
-							if (n == null)
-								return;
-							// thTreeMaker.lastpath = event.getPath();
-							if (lastpath != null)
-								thTreeMaker.lastRow = (tree
-										.getRowForPath(lastpath));
-							//
-							// System.out.println("tree select: " + ",, "
-							// + thTreeMaker.lastRow);
-							TmNode tn = (TmNode) n.getUserObject();
-							// System.out.println("Clicked on: " + tn.label +
-							// " - "
-							// + tn.node.getBeginLine());
-
-							offset = thTreeMaker.treeMaker.xyToOffset(
-									tn.node.getBeginLine()
-											- thTreeMaker.treeMaker.mainClassLineOffset,
-									tn.node.getBeginColumn());
-							// =
-							// editor.getTextArea().xyToOffset(tn.node.getBeginLine()-
-							// thTreeMaker.treeMaker.mainOffSet,
-							// tn.node.getBeginColumn());
-
-							// System.out.print("Line no: "
-							// + (tn.node.getBeginLine() -
-							// thTreeMaker.treeMaker.mainClassLineOffset));
-							// + "," + tn.node.getBeginColumn());
-							// System.out.println("Calculated Offset: " +
-							// offset);
-							//
-							// System.out.println("Editor offset: "
-							// + editor.getCaretOffset());
-
-							if (editor.getCaretOffset() != offset) {
-								// System.out.println("offset unequal");
-								editor.toFront();
-								editor.setSelection(offset, offset);
-							} else {
-								// System.out.println("Offset fine");
-							}
-
-						} catch (Exception ex) {
-							System.out.println("Error positioning cursor."
-									+ ex.toString());
-							if (TreeMaker.debugMode)
-								ex.printStackTrace();
-						}
-					}
-				};
-				worker.execute();
-			}
-		});
+		/*
+		 * tree.addMouseListener(new MouseListener() {
+		 * 
+		 * @Override public void mouseReleased(MouseEvent e) {
+		 * 
+		 * }
+		 * 
+		 * @Override public void mousePressed(MouseEvent e) {
+		 * 
+		 * }
+		 * 
+		 * @Override public void mouseExited(MouseEvent e) {
+		 * 
+		 * }
+		 * 
+		 * @Override public void mouseEntered(MouseEvent e) {
+		 * 
+		 * }
+		 * 
+		 * 
+		 * @SuppressWarnings("rawtypes")
+		 * 
+		 * @Override public void mouseClicked(final MouseEvent event) {
+		 * 
+		 * SwingWorker worker = new SwingWorker() {
+		 * 
+		 * @Override protected Object doInBackground() throws Exception { return
+		 * null; }
+		 * 
+		 * protected void done() { //scrollToLocation(); } }; worker.execute();
+		 * } });
+		 */
 
 		editor.addComponentListener(new ComponentListener() {
 
@@ -648,9 +695,9 @@ public class SketchOutlineFrame extends JFrame {
 					leaf, row, hasFocus);
 			if (value instanceof DefaultMutableTreeNode)
 				setIcon(getTreeIcon(value));
-			else
-			{
-				System.out.println("Weird: " + value.getClass().getCanonicalName());
+			else {
+				System.out.println("Weird: "
+						+ value.getClass().getCanonicalName());
 			}
 
 			return this;
@@ -675,10 +722,6 @@ public class SketchOutlineFrame extends JFrame {
 
 		}
 
-		private boolean isTutorialBook(Object value) {
-			// TODO Auto-generated method stub
-			return false;
-		}
 	}
 
 	/**

@@ -29,6 +29,10 @@
  */
 package sketchoutline.tool;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.TreeSet;
+
 import javax.swing.*;
 import javax.swing.tree.*;
 import processing.app.Editor;
@@ -56,29 +60,31 @@ public class ThreadedTreeMaker implements Runnable {
 	public final int fastTime = 1000, slowSleep = 3000;
 	int sleepDuration;
 	int buildCount = 1;
+	TreeSet<Integer> lastExpandedRows = new TreeSet<Integer>();
 
 	public void run() {
 
 		// If stop flag is set, break loop and return. This is
 		// the recommended way to stop a thread.
 		while (!stop) {
-									
-//			if (stop)
-//				break;
+
+			// if (stop)
+			// break;
 
 			try {
 				Thread.sleep(sleepDuration);
 
 				// Update the tree only if sketch is modified
-				if (treeMaker.editor != null && !treeMaker.basicMode) {
-					if (treeMaker.editor.getSketch().getCurrentCode()
-							.isModified()) {
-						// System.out.println("Editor modified");
-						updateTree();
-					} else {
-						// System.out.println("Editor NOT modified");
-						continue;
-					}
+				if (treeMaker.editor != null && !frame.tree.hasFocus()) {
+					// if (treeMaker.editor.getSketch().getCurrentCode()
+					// .isModified()) {
+					// // System.out.println("Editor modified");
+					// updateTree();
+					// } else {
+					// // System.out.println("Editor NOT modified");
+					// continue;
+					// }
+					updateTree();
 				}
 			} catch (InterruptedException e) {
 				System.err.println("ThreadedTreeMaker Interrupted! :(");
@@ -122,30 +128,30 @@ public class ThreadedTreeMaker implements Runnable {
 					}
 
 					protected void done() {
-						frame.tree.setModel(new DefaultTreeModel(getTree()));
-						((DefaultTreeModel) frame.tree.getModel()).reload();
-
 						// Expand trees only if user is not interacting with the
 						// frame
 						if (!frame.hasFocus()) {
-							for (int i = 0; i < frame.tree.getRowCount(); i++) {
-								frame.tree.expandRow(i);
-							}
+							frame.listenForTreeExpand = false;
+							frame.tree
+									.setModel(new DefaultTreeModel(getTree()));
+							((DefaultTreeModel) frame.tree.getModel()).reload();
 
-							if (lastRow >= 0) {
-								// frame.tree.expandRow(lastRow);
-								frame.tree.setSelectionRow(lastRow);
-								// frame.tree.
-								// System.out.println("Row expand.");
+							
+							for (Iterator iterator = lastExpandedRows
+									.iterator(); iterator.hasNext();) {
+								Integer path = (Integer) iterator.next();
+								// System.out.println("Expanding "
+								//		+ frame.tree.getPathForRow(path));
+								frame.tree.expandRow(path);
 							}
-//							if (lastRow < 0) {
-//								frame.tree.setSelectionRow(0);
-//							}
+							
+							frame.tree.validate();
+							frame.listenForTreeExpand = true;
 						}
-						frame.tree.validate();
+
 						if (TreeMaker.debugMode)
 							System.out.println("Outline Refreshed.");
-
+						//System.out.println("UPDT " + System.currentTimeMillis());
 					}
 				};
 				worker.execute();
@@ -199,7 +205,7 @@ public class ThreadedTreeMaker implements Runnable {
 	public void halt() {
 		if (thread == null)
 			return;
-//		thread.stop();
+		// thread.stop();
 		stop = true;
 		System.out.println("Auto refresh OFF.");
 	}
