@@ -4,7 +4,7 @@ Sketch Outline for PDE (Processing Development Environment)
 Sketch Outline is a [Processing](http://www.processing.org) tool that provides an outline view of the member variables, functions and classes within a sketch and allows easy navigation between them. 
 Similar to the outline view in Eclipse. 
 
-![Sketch Outline v0.1.7](https://lh6.googleusercontent.com/-z5238q7xFq4/UMmf9i3uaFI/AAAAAAAABCU/oPe2byj8Q6k/s512/SO_scr1.png)
+![Sketch Outline v0.1.7](https://lh6.googleusercontent.com/-z5238q7xFq4/UMmf9i3uaFI/AAAAAAAABCU/oPe2byj8Q6k/s539/SO_scr1.png)
 <br/>
 Grab the latest version from [here](https://github.com/Manindra29/Sketch-Outline/raw/master/distribution/SketchOutline-0.1.7/download/SketchOutline-0.1.7.zip).
 
