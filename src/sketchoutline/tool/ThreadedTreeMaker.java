@@ -24,8 +24,8 @@
  *  
  * 
  * @author	Manindra Moharana	##author##
- * @modified 19-03-2012			##date##
- * @version 0.1.5 (beta)		##version##
+ * @modified 25-12-2012			##date##
+ * @version 0.1.7 (beta)		##version##
  */
 package sketchoutline.tool;
 
